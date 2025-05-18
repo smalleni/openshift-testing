@@ -1,0 +1,53 @@
+---
+global:
+  gc: false
+  gcMetrics: false
+  measurements:
+    - name: podLatency
+      thresholds:
+        - conditionType: Ready
+          metric: P99
+          threshold: 13s
+    - name: serviceLatency
+      svcTimeout: 10s
+metricsEndpoints:
+  - metrics: metrics.yml
+    alerts: alerts.yml
+    indexer:
+      esServers: ["https://opensearch.domain:9200"]
+      insecureSkipVerify: true
+      defaultIndex: kube-burner
+      type: opensearch
+jobs:
+  - name: node-density-cni
+    namespace: node-density-cni
+    jobIterations: 50
+    qps: 20
+    burst: 20
+    namespacedIterations: true
+    iterationsPerNamespace: 10
+    churn: true
+    churnCycles: 10
+    churnDuration: 30m
+    churnPercent: 10
+    churnDelay: 1m
+    churnDeletionStrategy: default
+    podWait: false
+    waitWhenFinished: true
+    preLoadImages: true
+    preLoadPeriod: 15s
+    namespaceLabels:
+      security.openshift.io/scc.podSecurityLabelSync: false
+      pod-security.kubernetes.io/enforce: privileged
+      pod-security.kubernetes.io/audit: privileged
+      pod-security.kubernetes.io/warn: privileged
+    objects:
+
+      - objectTemplate: webserver-deployment.yml
+        replicas: 1
+
+      - objectTemplate: webserver-service.yml
+        replicas: 1
+
+      - objectTemplate: curl-deployment.yml
+        replicas: 1
