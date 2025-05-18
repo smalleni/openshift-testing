@@ -26,12 +26,7 @@ jobs:
     burst: 20
     namespacedIterations: true
     iterationsPerNamespace: 10
-    churn: true
-    churnCycles: 10
-    churnDuration: 30m
-    churnPercent: 10
-    churnDelay: 1m
-    churnDeletionStrategy: default
+    churn: false
     podWait: false
     waitWhenFinished: true
     preLoadImages: true
